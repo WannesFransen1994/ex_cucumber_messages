@@ -14,7 +14,7 @@ defmodule ExCucumberMessage.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :exprotobuf]
+      extra_applications: [:logger]
     ]
   end
 
@@ -22,7 +22,8 @@ defmodule ExCucumberMessage.MixProject do
   defp deps do
     [
       # {:protox, "~> 0.24.0"},
-      {:exprotobuf, "~> 1.2"}
+      {:protobuf, git: "https://github.com/tony612/protobuf-elixir.git", override: true},
+      {:google_protos, "~> 0.1"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
