@@ -1,0 +1,5 @@
+%{
+  "exprotobuf": {:hex, :exprotobuf, "1.2.17", "3003937da617f588a8fb63ebdd7b127a18d78d6502623c272076fd54c07c4de1", [:mix], [{:gpb, "~> 4.0", [hex: :gpb, repo: "hexpm", optional: false]}], "hexpm", "e07ec1e5ae6f8c1c8521450d5f6b658c8c700b1f34c70356e91ece0766f4361a"},
+  "gpb": {:hex, :gpb, "4.13.0", "ea3a81f83524d5685395594b57bb515f4631a54d27514219d67024bd251c9e82", [:make, :rebar], [], "hexpm", "93d082fa5f8439ec58749dafdb080fc911a5807c0ed2548a427b0ebb8272b54b"},
+  "protox": {:hex, :protox, "0.24.0", "f154bfd8de6c30b35e8b5fa64cfba41d54f93d69b0bdb49875657237190ef73d", [:mix], [], "hexpm", "8e0f9585c380560a5ce36d5552e081345966e529e5a174bbcdb76a33370db662"},
+}
