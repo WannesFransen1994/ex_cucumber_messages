@@ -3,5 +3,5 @@
   "google_protos": {:hex, :google_protos, "0.1.0", "c6b9e12092d17571b093d4156d004494ca143b65dbbcbfc3ffff463ea03467c0", [:mix], [{:protobuf, "~> 0.5", [hex: :protobuf, repo: "hexpm", optional: false]}], "hexpm", "ff5564525f89d2638a4cfa9fb4d31e9ee9d9d7cb937b3e8a95f558440c039e1b"},
   "gpb": {:hex, :gpb, "4.13.0", "ea3a81f83524d5685395594b57bb515f4631a54d27514219d67024bd251c9e82", [:make, :rebar], [], "hexpm", "93d082fa5f8439ec58749dafdb080fc911a5807c0ed2548a427b0ebb8272b54b"},
   "protobuf": {:git, "https://github.com/tony612/protobuf-elixir.git", "3428d3a61a355933ffab3c01bc1b71e94c135169", []},
-  "protox": {:hex, :protox, "0.24.0", "f154bfd8de6c30b35e8b5fa64cfba41d54f93d69b0bdb49875657237190ef73d", [:mix], [], "hexpm", "8e0f9585c380560a5ce36d5552e081345966e529e5a174bbcdb76a33370db662"},
+  "protox": {:hex, :protox, "0.25.0", "33ae92ae6ff7a27248f99223fdf5367bf7e6a701ec194a57347b636665a80efc", [:mix], [], "hexpm", "92db1da2801e3b5f7bccf1591d05be00a13bef4768c64de51d26a00d98537fd2"},
 }
