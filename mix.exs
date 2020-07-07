@@ -1,9 +1,9 @@
-defmodule ExCucumberMessage.MixProject do
+defmodule ExCucumberMessages.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :ex_cucumber_message,
+      app: :ex_cucumber_messages,
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,

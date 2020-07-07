@@ -1,4 +1,4 @@
-defmodule ExCucumberMessage do
+defmodule ExCucumberMessages do
   @moduledoc """
   Documentation for `ExCucumberMessage`.
   """
@@ -8,7 +8,7 @@ defmodule ExCucumberMessage do
 
   ## Examples
 
-      iex> ExCucumberMessage.hello()
+      iex> ExCucumberMessages.hello()
       :world
 
   """

@@ -1,8 +1,8 @@
-defmodule ExCucumberMessageTest do
+defmodule ExCucumberMessagesTest do
   use ExUnit.Case
-  doctest ExCucumberMessage
+  doctest ExCucumberMessages
 
   test "greets the world" do
-    assert ExCucumberMessage.hello() == :world
+    assert ExCucumberMessages.hello() == :world
   end
 end
