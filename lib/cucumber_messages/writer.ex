@@ -5,6 +5,8 @@ defmodule ExCucumberMessages.Writer do
   defp unstruct(just_a_value), do: just_a_value
 
   def envelopes_to_ndjson!(list_of_envelopes) when is_list(list_of_envelopes) do
-    Enum.map(list_of_envelopes, &(&1 |> unstruct |> Jason.encode!()))
+    list_of_envelopes
+    |> Enum.map(&(&1 |> unstruct |> Jason.encode!()))
+    |> Enum.join("\n")
   end
 end
