@@ -21,7 +21,8 @@ defmodule ExCucumberMessages.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:protox, "~> 0.25.0"}
+      {:protox, "~> 0.25.0"},
+      {:jason, "~> 1.2"}
     ]
   end
 end
