@@ -1,4 +1,4 @@
-defmodule MMwriter do
+defmodule ExCucumberMessages.Writer do
   defp unstruct(%CucumberMessages.Location{column: 0} = map, acc) do
     map |> Map.from_struct() |> Map.delete(:column) |> unstruct(acc)
   end
