@@ -1,45 +1,120 @@
-defmodule ExCucumberMessages.Writer do
-  defp unstruct(%{__struct__: _} = map) do
-    map
-    |> Map.from_struct()
-    |> unstruct()
-    |> case do
-      {:ok, v} -> v
-      {:replace, k, v} -> %{k => unstruct(v)}
-      data -> data
-    end
+defmodule MMwriter do
+  defp unstruct(%CucumberMessages.Location{column: 0} = map, acc) do
+    map |> Map.from_struct() |> Map.delete(:column) |> unstruct(acc)
   end
 
-  defp unstruct(%{} = map) do
-    Enum.map(map, fn {k, v} ->
-      new_v =
-        case unstruct(v) do
-          {:ok, v} -> v
-          {:replace, k, v} -> %{k => unstruct(v)}
-          data -> data
+  defp unstruct(%{__struct__: _} = map, acc) when is_map(map) do
+    map |> Map.from_struct() |> unstruct(acc)
+  end
+
+  defp unstruct(%{__uf__: _} = map, acc) when is_map(map) do
+    map |> Map.delete(:__uf__) |> unstruct(acc)
+  end
+
+  defp unstruct(map, acc) when is_map(map) do
+    Enum.reduce(map, acc, fn
+      :ignore, acc ->
+        acc
+
+      {_k, nil}, acc ->
+        acc
+
+      {_k, ""}, acc ->
+        acc
+
+      {_k, :ignore}, acc ->
+        acc
+
+      {_k, []}, acc ->
+        acc
+
+      {_k, {new_key, v}}, acc when is_map(v) or is_list(v) ->
+        Map.put(acc, lower_camelcase(new_key), unstruct(v, %{}))
+
+      {k, v}, acc when is_map(v) or is_list(v) ->
+        Map.put(acc, lower_camelcase(k), unstruct(v, %{}))
+
+      {k, data}, acc ->
+        Map.put(acc, lower_camelcase(k), unstruct(data, %{}))
+    end)
+  end
+
+  defp unstruct([], %{}) do
+    :ignore
+  end
+
+  defp unstruct(list, acc) when is_list(list) do
+    list
+    |> Enum.map(fn
+      %CucumberMessages.GherkinDocument.Feature.FeatureChild{} = el ->
+        el.value
+
+      %CucumberMessages.Pickle.PickleStep{
+        argument: %CucumberMessages.PickleStepArgument.PickleTable{}
+      } = el ->
+        Map.put(el, :argument, %{dataTable: el.argument}) |> Map.delete(:__struct__)
+
+      %CucumberMessages.Pickle.PickleStep{
+        argument: %CucumberMessages.PickleStepArgument.PickleDocString{}
+      } = el ->
+        Map.put(el, :argument, %{docString: el.argument}) |> Map.delete(:__struct__)
+
+      other_el ->
+        other_el
+    end)
+    |> Enum.reduce(acc, fn
+      {_new_key, nil}, acc ->
+        acc
+
+      {new_key, value}, acc when is_map(acc) ->
+        # Map.put(acc, lower_camelcase(new_key), unstruct(value, %{}))
+        [Map.put(acc, lower_camelcase(new_key), unstruct(value, %{}))]
+
+      {new_key, value}, acc when is_list(acc) ->
+        unstructed = unstruct(value, %{})
+
+        case unstructed do
+          :ignore -> acc
+          _ -> acc ++ [Map.put(%{}, lower_camelcase(new_key), unstructed)]
         end
 
-      {k, new_v}
+      map, acc when is_map(acc) and acc == %{} ->
+        unstructed = unstruct(map, %{})
+
+        case unstructed do
+          :ignore -> acc
+          _ -> [unstruct(map, %{})]
+        end
+
+      map, acc ->
+        unstructed = unstruct(map, %{})
+
+        case unstructed do
+          :ignore -> acc
+          _ -> acc ++ [unstruct(map, %{})]
+        end
     end)
-    |> Enum.into(%{})
   end
 
-  defp unstruct(list) when is_list(list) do
-    Enum.map(list, fn el ->
-      case unstruct(el) do
-        {:ok, v} -> v
-        {:replace, k, v} -> %{k => unstruct(v)}
-        data -> data
-      end
-    end)
+  defp unstruct({k, v}, acc) when not is_tuple(v),
+    do: Map.put(acc, lower_camelcase(k), unstruct(v, %{}))
+
+  defp unstruct(just_data, _acc) when not is_tuple(just_data), do: just_data
+
+  alias(CucumberMessages.Envelope)
+
+  def envelope_to_ndjson!(%Envelope{} = message) do
+    # This is sort of a sanity check to see whether the constructed message is
+    #   proto compliant
+    message |> Protox.Encode.encode!()
+
+    unstruct(message, %{})
   end
 
-  defp unstruct({key, value}), do: {:replace, key, value}
-  defp unstruct(just_a_value), do: {:ok, just_a_value}
+  defp lower_camelcase(atom) when is_atom(atom), do: atom |> Atom.to_string() |> lower_camelcase()
 
-  def envelopes_to_ndjson!(list_of_envelopes) when is_list(list_of_envelopes) do
-    list_of_envelopes
-    |> Enum.map(&(&1 |> unstruct |> Jason.encode!()))
-    |> Enum.join("\n")
+  defp lower_camelcase(string) when is_binary(string) do
+    {to_be_downcased, camelcased} = string |> Macro.camelize() |> String.split_at(1)
+    String.downcase(to_be_downcased) <> camelcased
   end
 end
