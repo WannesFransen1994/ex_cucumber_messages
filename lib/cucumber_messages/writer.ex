@@ -1,5 +1,14 @@
 defmodule ExCucumberMessages.Writer do
-  defp unstruct(%CucumberMessages.Location{column: 0} = map, acc) do
+  @moduledoc false
+  # This is a temporary writer up until Protox supports json encoding
+
+  alias CucumberMessages.Envelope
+  alias CucumberMessages.Location
+  alias CucumberMessages.Pickle.PickleStep
+  alias CucumberMessages.GherkinDocument.Feature.FeatureChild
+  alias CucumberMessages.PickleStepArgument.{PickleDocString, PickleTable}
+
+  defp unstruct(%Location{column: 0} = map, acc) do
     map |> Map.from_struct() |> Map.delete(:column) |> unstruct(acc)
   end
 
@@ -46,17 +55,13 @@ defmodule ExCucumberMessages.Writer do
   defp unstruct(list, acc) when is_list(list) do
     list
     |> Enum.map(fn
-      %CucumberMessages.GherkinDocument.Feature.FeatureChild{} = el ->
+      %FeatureChild{} = el ->
         el.value
 
-      %CucumberMessages.Pickle.PickleStep{
-        argument: %CucumberMessages.PickleStepArgument.PickleTable{}
-      } = el ->
+      %PickleStep{argument: %PickleTable{}} = el ->
         Map.put(el, :argument, %{dataTable: el.argument}) |> Map.delete(:__struct__)
 
-      %CucumberMessages.Pickle.PickleStep{
-        argument: %CucumberMessages.PickleStepArgument.PickleDocString{}
-      } = el ->
+      %PickleStep{argument: %PickleDocString{}} = el ->
         Map.put(el, :argument, %{docString: el.argument}) |> Map.delete(:__struct__)
 
       other_el ->
@@ -101,11 +106,10 @@ defmodule ExCucumberMessages.Writer do
 
   defp unstruct(just_data, _acc) when not is_tuple(just_data), do: just_data
 
-  alias(CucumberMessages.Envelope)
-
   def envelope_to_ndjson!(%Envelope{} = message) do
     # This is sort of a sanity check to see whether the constructed message is
     #   proto compliant
+    # As soon as Protox supports json encoding, this is no longer necessary
     message |> Protox.Encode.encode!()
 
     unstruct(message, %{})
