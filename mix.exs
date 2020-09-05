@@ -43,7 +43,7 @@ defmodule ExCucumberMessages.MixProject do
     [
       licenses: ["MIT"],
       source_url: @github,
-      links: %{"GitHub" => "https://github.com/elixir-ecto/postgrex"}
+      links: %{"GitHub" => @github}
     ]
   end
 end
